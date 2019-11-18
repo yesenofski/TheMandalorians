@@ -13,7 +13,7 @@ public class LoginPage : PageController
 	[SerializeField]
 	private InputField Password;
 
-	protected override void BuildPage() {
+	protected override void Rebuild() {
 		return;
 	}
 
@@ -25,8 +25,9 @@ public class LoginPage : PageController
 
 	public void Login() {
 		if (AccountManager.Self.Login(Username.text, Password.text)) {
-			PageManager.Self.Next("Groups Page");
+			//PageManager.Self.Next("Groups Page");
 		}
+		Shift("left");
 	}
 
 }

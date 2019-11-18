@@ -10,7 +10,7 @@ public class CreateGroupPage : PageController
 	[SerializeField]
 	private InputField Groupname;
 
-	protected override void BuildPage() {
+	protected override void Rebuild() {
 		return;
 	}
 

@@ -12,7 +12,7 @@ public class MembersPage : PageController
 	[SerializeField]
 	private GameObject ListContainer;
 
-	protected override void BuildPage() {
+	protected override void Rebuild() {
 		for (int i = 0; i < 20; i++) {
 			GameObject memberListItem = GameObject.Instantiate<GameObject>(MemberListItemPrefab);
 

@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PageManager : MonoSingleton<PageManager>
-{
+public class PageManager : MonoSingleton<PageManager> {
 	public HeaderController HeaderController;
 
 	public GameObject Canvas;
+
+	public LoginPage loginPage;
+	public GroupsPage groupPage;
+	public MessagesPage messagePage;
+	public MembersPage memberPage;
 
 	[SerializeField]
 	private PageController currentPage;
@@ -21,20 +25,20 @@ public class PageManager : MonoSingleton<PageManager>
 	protected override void DerivedAwake() {
 		LoadPrefab("Login Page");
 		LoadPrefab("Groups Page");
-        LoadPrefab("CreateGroup Page");
+		LoadPrefab("CreateGroup Page");
 		LoadPrefab("Members Page");
 
 	}
 
 	// Start is called before the first frame update
 	void Start() {
-        
-    }
 
-    // Update is called once per frame
-    void Update() {
-        
-    }
+	}
+
+	// Update is called once per frame
+	void Update() {
+
+	}
 
 	private void LoadPrefab(string pageName) {
 		GameObject prefab = Resources.Load<GameObject>("Prefabs/Pages/" + pageName);
@@ -64,8 +68,6 @@ public class PageManager : MonoSingleton<PageManager>
 
 		currentPage = page;
 		currentPage.gameObject.SetActive(true);
-
-		HeaderController.Load(page.HeaderInfo);
 	}
 
 	public void Next(string pageName) {
@@ -81,8 +83,7 @@ public class PageManager : MonoSingleton<PageManager>
 		SwitchTo(pageStack.Peek());
 	}
 
-	public void Pop()
-	{
+	public void Pop() {
 		pageStack.Pop();
 	}
 
@@ -91,8 +92,7 @@ public class PageManager : MonoSingleton<PageManager>
 		Next(pageName);
 	}
 
-    public void CreateGroup()
-    {
-        Next("CreateGroup Page");
-    }
+	public void CreateGroup() {
+		Next("CreateGroup Page");
+	}
 }

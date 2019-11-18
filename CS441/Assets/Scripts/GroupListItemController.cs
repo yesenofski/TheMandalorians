@@ -5,9 +5,14 @@ using UnityEngine.UI;
 
 public class GroupListItemController : MonoBehaviour
 {
+    
+    private GroupsPage groupPage;
+
 	public Image GroupImage;
 
 	public Text GroupName;
+
+	private Group group;
 
 	public GameObject NotificationBox;
 	public Text NotificationCount;
@@ -24,13 +29,18 @@ public class GroupListItemController : MonoBehaviour
         
     }
 
-	public bool Load(Group group) {
+	public bool Load(GroupsPage groupPageIn, Group groupIn) {
+        groupPage = groupPageIn;
+		group = groupIn;
+
 		GroupName.text = "  " + group.Name;
 
 		return true;
 	}
 
 	public void OpenGroup() {
-		PageManager.Self.Next("Members Page");
+		groupPage.activeGroup = group;
+		groupPage.Shift("left");
+		
 	}
 }

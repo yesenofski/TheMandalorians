@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class LoginPage : PageController
 {
@@ -13,7 +14,7 @@ public class LoginPage : PageController
 	[SerializeField]
 	private InputField Password;
 
-	protected override void Rebuild() {
+	protected override void BuildPage() {
 		return;
 	}
 
@@ -25,9 +26,15 @@ public class LoginPage : PageController
 
 	public void Login() {
 		if (AccountManager.Self.Login(Username.text, Password.text)) {
-			//PageManager.Self.Next("Groups Page");
+			if (Username.text == "Notifi" && Password.text == "Notifi")
+			{
+			PageManager.Self.Next("Groups Page");
+			}
+			else
+			{
+				EditorUtility.DisplayDialog("Login", "Please enter valid credentials!", "OK");
+			}
 		}
-		Shift("left");
 	}
 
 }

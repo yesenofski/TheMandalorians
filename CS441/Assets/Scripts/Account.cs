@@ -4,16 +4,13 @@ using UnityEngine;
 
 public class Account
 {
-	//public string Name { get; set; }
-
-	public Profile profile;
-
+	public string Name { get; set; }
 
 	public List<Group> Groups = new List<Group>();
 
 	// TODO: Give raw account data
 	public Account(string name) {
-		//profile.Name = name;
+		Name = name;
 
 		Groups.Add(new Group("CS441"));
 		Groups.Add(new Group("Set-Up Team"));

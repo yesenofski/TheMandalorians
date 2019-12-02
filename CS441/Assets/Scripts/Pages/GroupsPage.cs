@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroupsPage : PageController {
+public class GroupsPage : PageController
+{
 	public override HeaderInfo HeaderInfo { get; set; }
 
 	[SerializeField]
@@ -11,38 +12,17 @@ public class GroupsPage : PageController {
 	[SerializeField]
 	private GameObject ListContainer;
 
-	public Group activeGroup = null;
-
-	protected override void Rebuild() {
-
-		int childCount = ListContainer.transform.childCount;
-
-		//if (ListContainer.transform.childCount > 0) return;
-		print(GroupListItemPrefab.GetInstanceID());
-		int i = 0;
+	protected override void BuildPage() {
 		foreach (Group group in AccountManager.Self.Account.Groups) {
-			//print(2);
-			GameObject groupListItem;
+			GameObject groupListItem = GameObject.Instantiate<GameObject>(GroupListItemPrefab);
 
-			if (i >= childCount) {
-				groupListItem = GameObject.Instantiate<GameObject>(GroupListItemPrefab);
-			} else {
-				groupListItem = ListContainer.transform.GetChild(i).gameObject;
-			}
-
-
-
-
-			if (groupListItem.GetComponent<GroupListItemController>().Load(this, group)) {
+			if (groupListItem.GetComponent<GroupListItemController>().Load(group)) {
 				groupListItem.transform.SetParent(ListContainer.transform, false);
 			} else {
 				GameObject.Destroy(groupListItem);
 				Debug.LogWarning("WARNING: GroupListItem failed to load.");
 			}
-
-			i++;
 		}
-
 	}
 
 	protected override void BuildHeaderInfo() {

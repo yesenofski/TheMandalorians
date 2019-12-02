@@ -32,7 +32,7 @@ public class GroupListItemController : MonoBehaviour
 
 		GroupName.text = " " + group.Name;
 
-		GroupImage.color = Color.HSVToRGB((index % 12) / 12.0f, 0.6f, 1);
+		GroupImage.color = Color.HSVToRGB((index % 9) / 9.0f, 0.6f, 1);
 
 		return true;
 	}

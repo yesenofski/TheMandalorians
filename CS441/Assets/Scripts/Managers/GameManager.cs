@@ -6,8 +6,16 @@ public class GameManager : MonoSingleton<GameManager>
 {
 	public string Username { get; set; } = ""; // TODO: Move to AccountManager
 
+	public LoginPage loginPage;
+	public GroupsPage groupsPage;
+	public MessagesPage messagesPage;
+	public MembersPage memberPage;
+
+
 	protected override void DerivedAwake() {
 		DontDestroyOnLoad(gameObject);
+
+		Application.targetFrameRate = 60;
 
 	}
 

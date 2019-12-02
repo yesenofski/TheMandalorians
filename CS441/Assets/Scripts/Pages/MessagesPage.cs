@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MessagesPage : PageController {
 	public override HeaderInfo HeaderInfo { get; set; }
@@ -11,12 +12,29 @@ public class MessagesPage : PageController {
 	[SerializeField]
 	private GameObject ListContainer;
 
-	protected override void Rebuild() {
+	[SerializeField]
+	private Text title;
+
+	[SerializeField]
+	private ScrollRect scrollRect;
+
+	[SerializeField]
+	private InputField messageInput;
+
+	private int rebuildViewUpdateTimer = 0;
+
+	public override void Rebuild() {
+
+		print("Message rebuild");
+
+		rebuildViewUpdateTimer = 4;
+
+		title.text = GameManager.Self.groupsPage.activeGroup.Name;
 
 		int childCount = ListContainer.transform.childCount;
 
 		int i = 0;
-		foreach (string message in PageManager.Self.groupPage.activeGroup.Messages) {
+		foreach (string message in GameManager.Self.groupsPage.activeGroup.Messages) {
 			//print(2);
 			GameObject messageListItem;
 
@@ -29,7 +47,7 @@ public class MessagesPage : PageController {
 
 
 
-			if (messageListItem.GetComponent<MessageListItemController>().Load(this, message)) {
+			if (messageListItem.GetComponent<MessageListItemController>().Load(this, message, i)) {
 				messageListItem.transform.SetParent(ListContainer.transform, false);
 			} else {
 				GameObject.Destroy(messageListItem);
@@ -39,6 +57,23 @@ public class MessagesPage : PageController {
 			i++;
 		}
 
+
+	}
+
+	private void Update() {
+		if (rebuildViewUpdateTimer > 0) {
+			rebuildViewUpdateTimer--;
+
+			if (rebuildViewUpdateTimer == 0) {
+				ListContainer.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
+				scrollRect.verticalNormalizedPosition = 0.0f;
+			}
+		}
+	}
+
+	public void Send() {
+		StartCoroutine(HttpManager.Self.SendGroupMessage(GameManager.Self.groupsPage.activeGroup, messageInput.text));
+		messageInput.SetTextWithoutNotify("");
 	}
 
 	protected override void BuildHeaderInfo() {

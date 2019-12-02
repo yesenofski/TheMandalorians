@@ -13,19 +13,13 @@ public class Account
 
 	// TODO: Give raw account data
 	public Account(string name) {
-		//profile.Name = name;
-
-		Groups.Add(new Group("CS441"));
-		Groups.Add(new Group("Set-Up Team"));
-		Groups.Add(new Group("Neighborhood Group"));
-		Groups.Add(new Group("Family"));
-		Groups.Add(new Group("Bars Squad"));
-		Groups.Add(new Group("Fraternity"));
+		Debug.Log("new acc");
+		profile = new Profile(name);
 	}
 
     public void addNewGroup(string groupName)
     {
-        Groups.Add(new Group(groupName));
+        Groups.Add(new Group(groupName, "0"));
     }
 
 }

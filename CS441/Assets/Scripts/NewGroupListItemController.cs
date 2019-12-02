@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class PageManager : MonoSingleton<PageManager> {
-	public HeaderController HeaderController;
+public class NewGroupListItemController : MonoBehaviour {
 
-	public GameObject Canvas;
+	public GroupsPage groupPage;
 
-	
+	public InputField GroupNameInput;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -17,5 +17,9 @@ public class PageManager : MonoSingleton<PageManager> {
 	// Update is called once per frame
 	void Update() {
 
+	}
+
+	public void SaveGroup() {
+		groupPage.SaveNewGroup();
 	}
 }

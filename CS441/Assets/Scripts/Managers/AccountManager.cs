@@ -19,10 +19,14 @@ public class AccountManager : MonoSingleton<AccountManager>
         
     }
 
-	public bool Login(string username, string password) {
-		Debug.Log("Username: " + username + ", Password: " + password);
+	public bool Login(string username) {
+		Debug.Log("Username: " + username);
 
 		Account = new Account(username);
+
+		print(HttpManager.Self);
+		StartCoroutine(HttpManager.Self.GetGroups());
+
 
 
 		return true;

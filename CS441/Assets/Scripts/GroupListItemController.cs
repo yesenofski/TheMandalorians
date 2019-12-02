@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class GroupListItemController : MonoBehaviour
 {
-    
-    private GroupsPage groupPage;
 
 	public Image GroupImage;
 
@@ -29,18 +27,20 @@ public class GroupListItemController : MonoBehaviour
         
     }
 
-	public bool Load(GroupsPage groupPageIn, Group groupIn) {
-        groupPage = groupPageIn;
+	public bool Load(Group groupIn, int index) {
 		group = groupIn;
 
-		GroupName.text = "  " + group.Name;
+		GroupName.text = " " + group.Name;
+
+		GroupImage.color = Color.HSVToRGB((index % 12) / 12.0f, 0.6f, 1);
 
 		return true;
 	}
 
 	public void OpenGroup() {
-		groupPage.activeGroup = group;
-		groupPage.Shift("left");
+		
+		GameManager.Self.groupsPage.activeGroup = group;
+		GameManager.Self.groupsPage.Shift("left");
 		
 	}
 }

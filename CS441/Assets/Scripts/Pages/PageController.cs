@@ -39,7 +39,7 @@ public abstract class PageController : MonoBehaviour
         
     }
 
-	protected virtual void Rebuild() { }
+	public virtual void Rebuild() { }
 	protected abstract void BuildHeaderInfo();
 
     public void SetEnabled(int enabled)

@@ -7,19 +7,23 @@ public class GroupsPage : PageController {
 
 	[SerializeField]
 	private GameObject GroupListItemPrefab;
+	[SerializeField]
+	private GameObject NewGroupListItemPrefab;
 
 	[SerializeField]
 	private GameObject ListContainer;
 
 	public Group activeGroup = null;
 
-	protected override void Rebuild() {
+	private GameObject newGroup;
+
+	public override void Rebuild() {
 
 		int childCount = ListContainer.transform.childCount;
 
 		//if (ListContainer.transform.childCount > 0) return;
-		print(GroupListItemPrefab.GetInstanceID());
 		int i = 0;
+		print("acc" + AccountManager.Self.Account.Groups.Count);
 		foreach (Group group in AccountManager.Self.Account.Groups) {
 			//print(2);
 			GameObject groupListItem;
@@ -33,7 +37,7 @@ public class GroupsPage : PageController {
 
 
 
-			if (groupListItem.GetComponent<GroupListItemController>().Load(this, group)) {
+			if (groupListItem.GetComponent<GroupListItemController>().Load(group, i)) {
 				groupListItem.transform.SetParent(ListContainer.transform, false);
 			} else {
 				GameObject.Destroy(groupListItem);
@@ -44,6 +48,41 @@ public class GroupsPage : PageController {
 		}
 
 	}
+
+	public void ShowNewGroup() {
+		//ListContainer.
+
+		if (newGroup != null) {
+			SaveNewGroup();
+		}
+
+		newGroup = GameObject.Instantiate<GameObject>(NewGroupListItemPrefab);
+
+		newGroup.transform.SetParent(ListContainer.transform, false);
+		newGroup.transform.SetAsFirstSibling();
+
+		var newController = newGroup.GetComponent<NewGroupListItemController>();
+			
+		newController.groupPage = this;
+		newController.GroupNameInput.Select();
+
+
+	}
+
+	public void SaveNewGroup() {
+		string groupName = newGroup.GetComponent<NewGroupListItemController>().GroupNameInput.text.Trim();
+		GameObject.Destroy(newGroup);
+
+		if (groupName.Length == 0)
+			groupName = "Group";
+
+		GameObject group = GameObject.Instantiate<GameObject>(GroupListItemPrefab);
+		group.transform.SetParent(ListContainer.transform, false);
+		group.transform.SetAsFirstSibling();
+
+		group.GetComponent<GroupListItemController>().Load(new Group(groupName, "0"), ListContainer.transform.childCount);
+	}
+
 
 	protected override void BuildHeaderInfo() {
 		HeaderInfo = new HeaderInfo {

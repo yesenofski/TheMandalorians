@@ -10,7 +10,7 @@ public class CreateGroupPage : PageController
 	[SerializeField]
 	private InputField Groupname;
 
-	protected override void Rebuild() {
+	public override void Rebuild() {
 		return;
 	}
 
@@ -23,12 +23,6 @@ public class CreateGroupPage : PageController
             RightButtonIsText = true,
             RightButtonContent = " "
         };
-	}
-
-	public void Submit() {
-        AccountManager.Self.addGroupName(Groupname.text);
-		PageManager.Self.Pop();
-        PageManager.Self.Next("Groups Page");
 	}
 
 }

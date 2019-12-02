@@ -24,10 +24,7 @@ public class AccountManager : MonoSingleton<AccountManager>
 
 		Account = new Account(username);
 
-		print(HttpManager.Self);
 		StartCoroutine(HttpManager.Self.GetGroups());
-
-
 
 		return true;
 	}

@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class MembersPage : PageController
 {
-	public override HeaderInfo HeaderInfo { get; set; }
 
 	[SerializeField]
-	private GameObject MemberListItemPrefab;
+	private GameObject MemberListItemPrefab = null;
 
 	[SerializeField]
-	private GameObject ListContainer;
+	private GameObject ListContainer = null;
 
 	public override void Rebuild() {
 		for (int i = 0; i < 20; i++) {
@@ -23,16 +22,5 @@ public class MembersPage : PageController
 				Debug.LogWarning("WARNING: MemberListItem failed to load.");
 			}
 		}
-	}
-
-	protected override void BuildHeaderInfo() {
-		HeaderInfo = new HeaderInfo {
-			Visible = true,
-			Title = "[Group Name]",
-			LeftButtonIsText = true,
-			LeftButtonContent = "<",
-			RightButtonIsText = true,
-			RightButtonContent = "+"
-		};
 	}
 }

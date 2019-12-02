@@ -15,20 +15,18 @@ public class HttpManager : MonoSingleton<HttpManager> {
 	}
 	// Update is called once per frame
 	void Update() {
-	}
+	
+ }
+
 	public IEnumerator GetGroups() {
 
-		UnityWebRequest req = new UnityWebRequest(URL + "/groups/", "GET");
+		UnityWebRequest req = new UnityWebRequest(URL + "/groups", "GET");
 		req.downloadHandler = new DownloadHandlerBuffer();
 		yield return req.SendWebRequest();
 		if (req.isNetworkError || req.isHttpError) {
-			print(req.error);
+			Debug.LogError(req.error);
 		} else {
-			print(req.downloadHandler.text);
-
-
-			var helper = JsonUtility.FromJson<GroupCollectionHelper>(req.downloadHandler.text);
-			helper.Convert();
+			JsonUtility.FromJson<GroupCollectionHelper>(req.downloadHandler.text).Convert();
 
 			loaded = true;
 		}
@@ -40,80 +38,79 @@ public class HttpManager : MonoSingleton<HttpManager> {
 	};
 
 	public IEnumerator SendGroupMessage(Group group, string message) {
-		print("Sending Message");
-
-		message = message + "\n<color=#AAAAAAFF><size=30> - " + AccountManager.Self.Account.profile.Name + "</size></color>";
 
 		UnityWebRequest req = new UnityWebRequest(URL + "/groups/" + group.ID, "PUT");
 
-		string json = JsonUtility.ToJson(new MessageRequest{ newMessage = message }, true);
-
-		
-
-		print(json);
-		
 		req.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(
-			json
+			JsonUtility.ToJson(new MessageRequest { newMessage = message }, true)
 		));
 
 		req.uploadHandler.contentType = "application/json";
 
 		yield return req.SendWebRequest();
 		if (req.isNetworkError || req.isHttpError) {
-			print(req.error);
+			Debug.LogError(req.error);
 		} else {
-			StartCoroutine(UpdateGroup(group));
+			StartCoroutine(RefreshGroup(group));
 		}
 	}
 
 	public IEnumerator CreateGroup(string groupName) {
-		print("Creating Group");
 
-		UnityWebRequest req = new UnityWebRequest(URL + "/groups/", "POST");
+		UnityWebRequest req = new UnityWebRequest(URL + "/groups", "POST");
+		req.downloadHandler = new DownloadHandlerBuffer();
 
-		//string json = JsonUtility.ToJson(new MessageRequest { newMessage = message });
+		const string json = "[{\"WTF\" : \"club\" , \"value\" : \"Garbage\"}]";
 
-		//print(json);
+		req.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
 
-		//req.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+		req.uploadHandler.contentType = "application/json";
 
 		yield return req.SendWebRequest();
 		if (req.isNetworkError || req.isHttpError) {
-			print(req.error);
+			Debug.LogError(req.error);
 		} else {
-			print(req.responseCode);
-			//print
+			Group newGroup = JsonUtility.FromJson<GroupHelper3>(req.downloadHandler.text).Convert();
+			AccountManager.Self.Account.Groups.Add(newGroup);
+
+			StartCoroutine(SendGroupMessage(newGroup, groupName));
 		}
 	}
 
-	public IEnumerator UpdateGroup(Group group) {
-		print("Creating Group");
+	public IEnumerator RefreshGroup(Group group) {
 
 		UnityWebRequest req = new UnityWebRequest(URL + "/groups/" + group.ID, "GET");
 		req.downloadHandler = new DownloadHandlerBuffer();
 
-		//string json = JsonUtility.ToJson(new MessageRequest { newMessage = message });
+		yield return req.SendWebRequest();
+		if (req.isNetworkError || req.isHttpError) {
+			Debug.LogError(req.error);
+		} else {
+			Group newGroup = JsonUtility.FromJson<GroupHelper2>(req.downloadHandler.text).Convert();
+			group.Messages = newGroup.Messages;
+			group.Name = newGroup.Name;
+			group.ID = newGroup.ID;
+		}
 
-		//print(json);
+		if (GameManager.Self.activePage == GameManager.Self.groupsPage) {
+			GameManager.Self.groupsPage.Rebuild();
+		} else {
+			GameManager.Self.messagesPage.Rebuild();
+		}
+	}
 
-		//req.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+#if UNITY_EDITOR
+	public IEnumerator DeleteGroup(Group group) {
+
+		UnityWebRequest req = new UnityWebRequest(URL + "/groups/" + group.ID, "DELETE");
+		req.downloadHandler = new DownloadHandlerBuffer();
 
 		yield return req.SendWebRequest();
 		if (req.isNetworkError || req.isHttpError) {
-			print(req.error);
+			Debug.LogError(req.error);
 		} else {
-			print(req.responseCode);
-			print(req.downloadHandler.text);
-			print(GameManager.Self.groupsPage.activeGroup.Messages.Count);
-			Group newGroup = JsonUtility.FromJson<GroupHelper2>(req.downloadHandler.text).Convert();
-			group.Messages = newGroup.Messages;
-			//group.
-
-			print(GameManager.Self.groupsPage.activeGroup.Messages.Count);
-			//group.Messages = newGroup.Messages;
-			//group.Name = newGroup.Name;
+			print("DELETED");
 		}
-
-		GameManager.Self.messagesPage.Rebuild();
 	}
+#endif
 }

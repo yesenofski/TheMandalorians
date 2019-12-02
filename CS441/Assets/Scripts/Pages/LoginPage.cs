@@ -5,12 +5,11 @@ using UnityEngine.UI;
 
 public class LoginPage : PageController
 {
-	public override HeaderInfo HeaderInfo { get; set; }
 
 	private bool waiting = false;
 
 	[SerializeField]
-	private InputField Username;
+	private InputField Username = null;
 
 	private void Start() {
 		GetComponent<Animator>().SetTrigger("Activate");
@@ -20,17 +19,12 @@ public class LoginPage : PageController
 		if (HttpManager.Self.loaded && waiting) {
 			Shift("left");
 			waiting = false;
+			HttpManager.Self.loaded = false;
 		}
 	}
 
 	public override void Rebuild() {
 		return;
-	}
-
-	protected override void BuildHeaderInfo() {
-		HeaderInfo = new HeaderInfo {
-			Visible = false
-		};
 	}
 
 	public void Login() {

@@ -13,7 +13,6 @@ public class Account
 
 	// TODO: Give raw account data
 	public Account(string name) {
-		Debug.Log("new acc");
 		profile = new Profile(name);
 	}
 

@@ -5,14 +5,12 @@ using UnityEngine.UI;
 
 public class MessageListItemController : MonoBehaviour {
 
-	private MessagesPage messagePage;
-
 	public Text MessageText;
 
 	private string message;
 
 	[SerializeField]
-	private Image line;
+	private Image line = null;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -25,20 +23,14 @@ public class MessageListItemController : MonoBehaviour {
 	}
 
 	public bool Load(MessagesPage messagePageIn, string messageIn, int index) {
-		messagePage = messagePageIn;
 		message = messageIn;
-
+		//print(messageIn);
 		MessageText.text = message;
+		//gameObject.SetActive(false);
+		//gameObject.SetActive(true);
 
 		line.color = Color.HSVToRGB((index % 9) / 9.0f, 0.6f, 1);
 
 		return true;
-	}
-
-	public void OpenMessage() {
-		//messagePage.activeMessage = message;
-		messagePage.Shift("left");
-
-
 	}
 }

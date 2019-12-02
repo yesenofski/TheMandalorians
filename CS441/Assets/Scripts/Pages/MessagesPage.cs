@@ -4,29 +4,29 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MessagesPage : PageController {
-	public override HeaderInfo HeaderInfo { get; set; }
 
 	[SerializeField]
-	private GameObject MessageListItemPrefab;
+	private GameObject MessageListItemPrefab = null;
 
 	[SerializeField]
-	private GameObject ListContainer;
+	private GameObject ListContainer = null;
 
 	[SerializeField]
-	private Text title;
+	private Text title = null;
 
 	[SerializeField]
-	private ScrollRect scrollRect;
+	private ScrollRect scrollRect = null;
 
 	[SerializeField]
-	private InputField messageInput;
+	private InputField messageInput = null;
 
 	private int rebuildViewUpdateTimer = 0;
 
 	public override void Rebuild() {
 
-		print("Message rebuild");
-
+		if (GameManager.Self.groupsPage.activeGroup == null)
+			return;
+  
 		rebuildViewUpdateTimer = 4;
 
 		title.text = GameManager.Self.groupsPage.activeGroup.Name;
@@ -35,7 +35,7 @@ public class MessagesPage : PageController {
 
 		int i = 0;
 		foreach (string message in GameManager.Self.groupsPage.activeGroup.Messages) {
-			//print(2);
+			
 			GameObject messageListItem;
 
 			if (i >= childCount) {
@@ -44,7 +44,7 @@ public class MessagesPage : PageController {
 				messageListItem = ListContainer.transform.GetChild(i).gameObject;
 			}
 
-
+			//print(messageListItem.GetComponent<MessageListItemController>().MessageText.text);
 
 
 			if (messageListItem.GetComponent<MessageListItemController>().Load(this, message, i)) {
@@ -57,6 +57,9 @@ public class MessagesPage : PageController {
 			i++;
 		}
 
+		for (; i < childCount; i++) {
+			GameObject.Destroy(ListContainer.transform.GetChild(i).gameObject);
+		}
 
 	}
 
@@ -72,18 +75,15 @@ public class MessagesPage : PageController {
 	}
 
 	public void Send() {
-		StartCoroutine(HttpManager.Self.SendGroupMessage(GameManager.Self.groupsPage.activeGroup, messageInput.text));
-		messageInput.SetTextWithoutNotify("");
-	}
+		#if UNITY_EDITOR
+		if (messageInput.text == ".del") {
+			StartCoroutine(HttpManager.Self.DeleteGroup(GameManager.Self.groupsPage.activeGroup));
+			return;
+		}
+		#endif
 
-	protected override void BuildHeaderInfo() {
-		HeaderInfo = new HeaderInfo {
-			Visible = true,
-			Title = "Messages",
-			LeftButtonIsText = true,
-			LeftButtonContent = "☰",
-			RightButtonIsText = true,
-			RightButtonContent = "+"
-		};
+		string message = messageInput.text + "\n<color=#AAAAAAFF><size=30> - " + AccountManager.Self.Account.profile.Name + "</size></color>";
+		StartCoroutine(HttpManager.Self.SendGroupMessage(GameManager.Self.groupsPage.activeGroup, message));
+		messageInput.SetTextWithoutNotify("");
 	}
 }

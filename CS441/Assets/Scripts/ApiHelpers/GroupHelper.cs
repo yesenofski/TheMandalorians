@@ -15,16 +15,20 @@ public class GroupHelper {
 
 	public Group Convert() {
 
-		Debug.Log(messages.Count);
-
 		List<Profile> outProfiles = new List<Profile>();
 
 		foreach (ProfileHelper helper in person) {
 			outProfiles.Add(helper.Convert());
 		}
 
-		var outGroup = new Group(_id, _id);
+		if (messages.Count == 0)
+			messages.Add("Group");
+
+		var outGroup = new Group(messages[0], _id);
+		messages.RemoveAt(0);
+
 		outGroup.Messages = messages;
+
 		return outGroup;
 	}
 }
@@ -35,5 +39,13 @@ public class GroupHelper2 {
 
 	public Group Convert() {
 		return group.Convert();
+	}
+}
+
+public class GroupHelper3 {
+	public GroupHelper createdGroup;
+
+	public Group Convert() {
+		return createdGroup.Convert();
 	}
 }

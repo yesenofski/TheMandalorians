@@ -3,29 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GroupsPage : PageController {
-	public override HeaderInfo HeaderInfo { get; set; }
 
 	[SerializeField]
-	private GameObject GroupListItemPrefab;
+	private GameObject GroupListItemPrefab = null;
 	[SerializeField]
-	private GameObject NewGroupListItemPrefab;
+	private GameObject NewGroupListItemPrefab = null;
 
 	[SerializeField]
-	private GameObject ListContainer;
+	private GameObject ListContainer = null;
 
 	public Group activeGroup = null;
 
-	private GameObject newGroup;
+	private GameObject newGroup = null;
 
 	public override void Rebuild() {
-
 		int childCount = ListContainer.transform.childCount;
 
-		//if (ListContainer.transform.childCount > 0) return;
 		int i = 0;
-		print("acc" + AccountManager.Self.Account.Groups.Count);
+
 		foreach (Group group in AccountManager.Self.Account.Groups) {
-			//print(2);
 			GameObject groupListItem;
 
 			if (i >= childCount) {
@@ -33,9 +29,6 @@ public class GroupsPage : PageController {
 			} else {
 				groupListItem = ListContainer.transform.GetChild(i).gameObject;
 			}
-
-
-
 
 			if (groupListItem.GetComponent<GroupListItemController>().Load(group, i)) {
 				groupListItem.transform.SetParent(ListContainer.transform, false);
@@ -47,10 +40,12 @@ public class GroupsPage : PageController {
 			i++;
 		}
 
+		for (; i < childCount; i++) {
+			GameObject.Destroy(ListContainer.transform.GetChild(i).gameObject);
+		}
 	}
 
 	public void ShowNewGroup() {
-		//ListContainer.
 
 		if (newGroup != null) {
 			SaveNewGroup();
@@ -71,27 +66,16 @@ public class GroupsPage : PageController {
 
 	public void SaveNewGroup() {
 		string groupName = newGroup.GetComponent<NewGroupListItemController>().GroupNameInput.text.Trim();
+		newGroup.transform.SetParent(null);
 		GameObject.Destroy(newGroup);
 
 		if (groupName.Length == 0)
 			groupName = "Group";
 
-		GameObject group = GameObject.Instantiate<GameObject>(GroupListItemPrefab);
-		group.transform.SetParent(ListContainer.transform, false);
-		group.transform.SetAsFirstSibling();
+		StartCoroutine(HttpManager.Self.CreateGroup(groupName));
 
-		group.GetComponent<GroupListItemController>().Load(new Group(groupName, "0"), ListContainer.transform.childCount);
-	}
+		//AccountManager.Self.Account.Groups.Insert(0, new Group(groupName, "0"));
 
-
-	protected override void BuildHeaderInfo() {
-		HeaderInfo = new HeaderInfo {
-			Visible = true,
-			Title = "Groups",
-			LeftButtonIsText = true,
-			LeftButtonContent = "☰",
-			RightButtonIsText = true,
-			RightButtonContent = "+"
-		};
+		//Rebuild();
 	}
 }
